@@ -41,7 +41,17 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
+});
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`\n[Server Error] Port ${PORT} is already in use by another running instance.`);
+    console.error(`To free port ${PORT} on Windows PowerShell, run:`);
+    console.error(`  Stop-Process -Id (Get-NetTCPConnection -LocalPort ${PORT}).OwningProcess -Force\n`);
+  } else {
+    console.error('[Server Error]', err);
+  }
 });
 
